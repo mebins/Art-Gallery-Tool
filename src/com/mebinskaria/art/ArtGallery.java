@@ -1,5 +1,6 @@
 package com.mebinskaria.art;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,6 +10,10 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
@@ -16,6 +21,7 @@ import com.mebinskaria.io.FileManager;
 import com.mebinskaria.io.MouseManager;
 import com.mebinskaria.io.Screenshot;
 import com.mebinskaria.main.DataModel;
+import com.mebinskaria.main.Drawable;
 import com.mebinskaria.main.Gallery;
 
 public class ArtGallery extends Gallery {
@@ -27,20 +33,30 @@ public class ArtGallery extends Gallery {
 		this.setSize(new Dimension(width,height));
 		initialize();
 	}
-
 	private JButton[] buttons = { new JButton("Restart"), new JButton("Erase Guards"), new JButton("Lines"),
 			new JButton("Guards"), new JButton("Computing: OFF"), new JButton("Screenshot and Save JPEG"), new JButton("Save File"),
 			new JButton("Load File"),new JButton("set Guard Vision") };
 	private JTextField power = new JTextField("0");
 
+	private JSlider radialLevel = new JSlider(1,100);
+	
+	private JLabel radialLevelLabel = new JLabel();
+	private JPanel canvas = new JPanel();
+	private JScrollPane canvasScroll = new JScrollPane(canvas);
 	@Override
 	public void initialize() {
-
+		
 		for (JButton b : buttons) {
 			this.tools.add(b);
 		}
+		radialLevel.setInverted(true);
+		
+		//radialLevel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
 		tools.add(power);
-
+		tools.add(radialLevel);
+		tools.add(radialLevelLabel);
+		
 		buttons[0].addActionListener((ActionEvent event) -> restartCanvas());
 		buttons[1].addActionListener((ActionEvent event) -> eraseGuards());
 		buttons[2].addActionListener((ActionEvent event) -> DataModel.setMode(DataModel.Mode.LINE));
@@ -50,9 +66,12 @@ public class ArtGallery extends Gallery {
 		buttons[6].addActionListener((ActionEvent event) -> FileManager.saveFile());
 		buttons[7].addActionListener((ActionEvent event) -> FileManager.chooseLoadFile(gallery));
 		buttons[8].addActionListener((ActionEvent event) -> readPower());
+		
 		mm = new MouseManager(gallery, this);
+
 		gallery.addMouseListener(mm);
-		gallery.add(this);
+		canvas.add(this);
+		gallery.add(canvasScroll,BorderLayout.CENTER);
 		this.setFocusable(false);
 		this.addMouseListener(mm);
 		this.createBufferStrategy(3);
@@ -72,6 +91,8 @@ public class ArtGallery extends Gallery {
 	}
 	@Override
 	public void update() {
+		radialLevelLabel.setText((int)(2*Math.PI/(radialLevel.getValue()/100f)) +1 +" Radial Lines");
+		DataModel.setGuardRadialSpace(radialLevel.getValue()/100f);
 		shouldRender = true;
 		Dimension canvasSize = this.getSize();
 		Dimension frameSize = gallery.getSize();
@@ -83,8 +104,7 @@ public class ArtGallery extends Gallery {
 		{
 			this.setSize((int)frameSize.getWidth(), (int)frameSize.getHeight());
 		}
-		
-		for(Guard e : DataModel.getGuards())
+		for(Drawable e : DataModel.getDrawables())
 		{
 			e.update();
 		}
@@ -107,13 +127,9 @@ public class ArtGallery extends Gallery {
 			g.clearRect(0, 0, getWidth(), getHeight());
 			g.setColor(Color.BLACK);
 			
-			for(Wall w : DataModel.getWalls())
+			for(Drawable d : DataModel.getDrawables())
 			{
-				w.render(g);
-			}
-			for(Guard e : DataModel.getGuards())
-			{
-				e.render(g);
+				d.render(g);
 			}
 			g.dispose();
 			bs.show();
@@ -124,7 +140,6 @@ public class ArtGallery extends Gallery {
 	
 
 	private void readPower() {
-		System.out.println(power.getText());
 		try
 		{
 			int d = Integer.parseInt(power.getText());

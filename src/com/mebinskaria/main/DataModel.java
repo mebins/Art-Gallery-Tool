@@ -13,6 +13,7 @@ public class DataModel {
 	}
 	private static ArrayList<Guard> guards = new ArrayList<>();
 	private static ArrayList<Wall> walls = new ArrayList<>();
+	private static double guardRadialSpace = 0;
 	private static int guardPowerLevel = 0;
 	private static boolean computing = false;
 	
@@ -38,7 +39,13 @@ public class DataModel {
 	{
 		guards = g;
 	}
-	
+	public static ArrayList<Drawable> getDrawables()
+	{
+		ArrayList<Drawable> list = new ArrayList<>();
+		list.addAll(guards);
+		list.addAll(walls);
+		return list;
+	}
 	public static void addGuard(Guard g)
 	{
 		guards.add(g);
@@ -65,6 +72,14 @@ public class DataModel {
 			computing = false;
 			button.setText("Computing: OFF");
 		}
+	}
+	public static double getGuardRadialSpace()
+	{
+		return guardRadialSpace;
+	}
+	public static void setGuardRadialSpace(double guardRadialSpace)
+	{
+		DataModel.guardRadialSpace = guardRadialSpace;
 	}
 	public static int getGuardPowerLevel()
 	{

@@ -2,12 +2,14 @@ package com.mebinskaria.io;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Scanner;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -24,25 +26,35 @@ public class FileManager {
 		Calendar now = Calendar.getInstance();
 		File desktop = new File(System.getProperty("user.home"), "Desktop\\ArtGalleryExports\\Saves");
 		File saveDir = new File(System.getProperty("user.home"),
-				"Desktop\\ArtGalleryExports\\Saves\\" + Screenshot.formatter.format(now.getTime()) + ".txt");
+				"Desktop\\ArtGalleryExports\\Saves\\" + Screenshot.formatter.format(now.getTime()) + ".bin");
+		File saveReport = new File(System.getProperty("user.home"),
+				"Desktop\\ArtGalleryExports\\Saves\\Report " + Screenshot.formatter.format(now.getTime()) + ".txt");
 		if (!desktop.exists()) {
 			desktop.mkdirs();
 		}
+		/*
+		 * Gives a Readable Data point of All Objects
+		 */
 		try {
-			FileWriter fw = new FileWriter(saveDir);
+			FileWriter fw = new FileWriter(saveReport);
 			BufferedWriter bw = new BufferedWriter(fw);
-			for (Drawable e : DataModel.getGuards()) {
-				bw.write(e.toString()+"\n");
-			}
-			for(Drawable e: DataModel.getWalls())
+			for(Drawable e: DataModel.getDrawables())
 			{
-				bw.write(e.toString()+"\n");
+				bw.write(e.toString());
+				bw.newLine();
 			}
 			bw.close();
 			fw.close();
+			/*
+			 * Creates Save bin file to restore All Objects
+			 */
+			ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(saveDir));
+			os.writeObject(DataModel.getDrawables());
+			os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	public static void chooseLoadFile(JFrame gallery) {
 		JFileChooser chooser = new JFileChooser();
@@ -57,25 +69,29 @@ public class FileManager {
 			// do when cancel
 		}
 	}
-	private static ArrayList<Drawable> loadFile(File file) {
+	@SuppressWarnings("unchecked")
+	private static void loadFile(File file) {
 		ArrayList<Drawable> drawables = new ArrayList<>();
 		try {
-			Scanner sc = new Scanner(file);
-			while (sc.hasNextLine()) {
-				String[] data = sc.nextLine().split(":");
-				switch(data[0])
-				{
-				case "W": DataModel.addWall(new Wall(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4])));
-					break;
-				case "G": DataModel.addGuard(new Guard(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3])));
+			ObjectInputStream os = new ObjectInputStream(new FileInputStream(file));
+			Object temp = os.readObject();
+			os.close();
+			drawables = (ArrayList<Drawable>) temp;
+			for(Drawable e : drawables)
+			{
+				if(e instanceof Guard)
+				{	
+					DataModel.addGuard((Guard) e);
 				}
-				
+				if(e instanceof Wall)
+				{
+					DataModel.addWall((Wall) e);
+				}
 			}
-			sc.close();
-		} catch (FileNotFoundException e) {
+			
+		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return drawables;
 	}
 }

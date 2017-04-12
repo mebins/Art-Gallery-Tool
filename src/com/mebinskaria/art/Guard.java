@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.mebinskaria.main.DataModel;
 import com.mebinskaria.main.Drawable;
 
+@SuppressWarnings("serial")
 public class Guard implements Drawable {
 
 	/*
@@ -37,11 +38,12 @@ public class Guard implements Drawable {
 	 * @param list The array of Walls that is used to see what the Guard can
 	 * see.
 	 */
+	@Override
 	public void render(Graphics g) {
 		g.setColor(newColor);
 		g.fillOval(x, y, CIRCLE_SIZE, CIRCLE_SIZE);
 		if (compute) {
-				computation(g);
+				computation(g,DataModel.getGuardRadialSpace());
 			}
 		g.setColor(Color.black);
 		}
@@ -55,7 +57,7 @@ public class Guard implements Drawable {
 	
 	}
 	
-	public void computation(Graphics g) {
+	public void computation(Graphics g, double radialLevel) {
 		ArrayList<Wall> walls = DataModel.getWalls();
 		// for every wall
 		int x = this.getX() + DISPLACEMENT;
@@ -67,7 +69,7 @@ public class Guard implements Drawable {
 		double length = 4000;
 		
 		//360 degrees
-		for (double theta = 0; theta < 2*Math.PI; theta += 0.02) {
+		for (double theta = 0; theta < 2*Math.PI; theta += radialLevel) {
 			ArrayList<Integer> optimizedList = new ArrayList<Integer>();
 			boolean possibleIntersection = false;
 			
@@ -125,7 +127,7 @@ public class Guard implements Drawable {
 		}
 	}
 
-
+	
 	public String toString()
 	{
 		return "G:"+this.x + ":"+this.y+":"+this.power;
@@ -162,7 +164,25 @@ public class Guard implements Drawable {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+	public boolean equals(Object target)
+	{
+		if(target instanceof Guard)
+		{
+			Guard other = (Guard)target;
+			if(other.x == x)
+			{
+				if(other.y == y)
+				{
+					if(other.power == power)
+					{
+						if(other.newColor.equals(newColor)) return true;
+					}
+				}
+			}
+		}
+		return false;
+		
+	}
 	private int x;
 	private int y;
 
@@ -174,5 +194,6 @@ public class Guard implements Drawable {
 	private int  power = 0; // how many walls it can see through
 	private Color[] colors = {Color.blue,Color.green,Color.RED,Color.yellow,Color.CYAN,Color.PINK};
 	private Color newColor;
+	
 
 }

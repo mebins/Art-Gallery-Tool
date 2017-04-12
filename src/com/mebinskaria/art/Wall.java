@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import com.mebinskaria.main.Drawable;
 
+@SuppressWarnings("serial")
 public class Wall implements Drawable{
 	
 	private int x;

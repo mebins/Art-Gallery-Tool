@@ -49,7 +49,6 @@ public class MouseManager implements MouseListener {
 			Point position = frame.getMousePosition();
 			position.x -= WINDOWSLINECALIBRATIONX;
 			position.y -= WINDOWSLINECALIBRATIONY;
-			System.out.println(position.x + " , " + position.y);
 			
 			if (DataModel.getMode() == DataModel.Mode.LINE) {
 				Wall firstWall;
