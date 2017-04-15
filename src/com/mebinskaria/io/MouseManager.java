@@ -11,11 +11,12 @@ import com.mebinskaria.art.ArtGallery;
 import com.mebinskaria.art.Guard;
 import com.mebinskaria.art.Wall;
 import com.mebinskaria.main.DataModel;
+import com.mebinskaria.main.DataModel.Mode;
 import com.mebinskaria.main.Gallery;
 
 public class MouseManager implements MouseListener {
-	JFrame frame;
-	Gallery gallery;
+	private JFrame frame;
+	private Gallery gallery;
 
 	public MouseManager(JFrame frame, Gallery gallery) {
 		this.frame = frame;
@@ -50,10 +51,10 @@ public class MouseManager implements MouseListener {
 			position.x -= WINDOWSLINECALIBRATIONX;
 			position.y -= WINDOWSLINECALIBRATIONY;
 			
-			if (DataModel.getMode() == DataModel.Mode.LINE) {
+			if (dataModel.getMode() == Mode.LINE) {
 				Wall firstWall;
 				Wall lastWall;
-				ArrayList<Wall> walls = DataModel.getWalls();
+				ArrayList<Wall> walls = dataModel.getWalls();
 				if (walls.size() > 0 && !ag.isPolygonDrawn()) {
 					lastWall = walls.get(walls.size() - 1);
 					firstWall = walls.get(ag.getPolygonIndex());
@@ -69,7 +70,7 @@ public class MouseManager implements MouseListener {
 						walls.add(new Wall((int) lastWall.getX2(), (int) lastWall.getY2(), (int) position.getX(),
 								(int) position.getY()));
 					}
-					DataModel.setWalls(walls);
+					dataModel.setWalls(walls);
 				} else {
 					
 					int x1 = ag.getX1();
@@ -85,7 +86,7 @@ public class MouseManager implements MouseListener {
 						ag.setX1((int) position.getX());
 						ag.setY1((int) position.getY());
 					}
-					DataModel.setWalls(walls);
+					dataModel.setWalls(walls);
 				}
 		
 			}
@@ -94,8 +95,8 @@ public class MouseManager implements MouseListener {
 			 */
 			position.y -= WINDOWSGUARDCALIBRATIONY;
 			position.x -= WINDOWSGUARDCALIBRATIONX;
-			if (DataModel.getMode() == DataModel.Mode.GUARD) {
-				DataModel.addGuard(new Guard((int) position.getX(), (int) position.getY(), DataModel.getGuardPowerLevel()));
+			if (dataModel.getMode() == Mode.GUARD) {
+				dataModel.addGuard(new Guard((int) position.getX(), (int) position.getY(), dataModel.getGuardPowerLevel()));
 			}
 		}
 		
@@ -111,5 +112,5 @@ public class MouseManager implements MouseListener {
 	private final int WINDOWSLINECALIBRATIONX = 11;
 	private final int WINDOWSGUARDCALIBRATIONY = 10;
 	private final int WINDOWSGUARDCALIBRATIONX = 7;
-
+	private final DataModel dataModel = DataModel.getInstance();
 }

@@ -28,7 +28,7 @@ public class Guard implements Drawable {
 		this.power = n;
 		newColor = colors[colorSelection];
 		if(++colorSelection >= colors.length) colorSelection = 0;
-		compute = DataModel.isComputing();
+		compute = dataModel.isComputing();
 	}
 	/*
 	 * Draws the guard and if computed will draw the area the guard can see.
@@ -43,22 +43,33 @@ public class Guard implements Drawable {
 		g.setColor(newColor);
 		g.fillOval(x, y, CIRCLE_SIZE, CIRCLE_SIZE);
 		if (compute) {
-				computation(g,DataModel.getGuardRadialSpace());
+				for(Line e : lines)
+				{
+					e.render(g);
+				}
 			}
-		g.setColor(Color.black);
+		g.setColor(newColor.brighter());
+		g.fillOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
+		g.setColor(Color.BLACK);
+		g.drawOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
+		g.setColor(newColor);
 		}
+	
 
 	
 	/*
 	 * Function used to update the Guard.
 	 */
 	public void update() {
-			compute = DataModel.isComputing();
-	
+			compute = dataModel.isComputing();
+			computation(dataModel.getGuardRadialSpace());
 	}
 	
-	public void computation(Graphics g, double radialLevel) {
-		ArrayList<Wall> walls = DataModel.getWalls();
+	public void computation(double radialLevel) {
+		if(radialLevel != oldRadialLevel)
+		{
+		ArrayList<Wall> walls = dataModel.getWalls();
+		lines.clear();
 		// for every wall
 		int x = this.getX() + DISPLACEMENT;
 		int y = this.getY() + DISPLACEMENT;
@@ -115,15 +126,13 @@ public class Guard implements Drawable {
 
 						int finalX = (int) (x + lowest * Math.sin(theta));
 						int finalY = (int) (y + lowest * Math.cos(theta));
-						g.drawLine(startX, startY, finalX, finalY);
+						lines.add(new Line(startX,startY,finalX,finalY));
 					}
 				}
 			}
-			g.setColor(newColor.brighter());
-			g.fillOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
-			g.setColor(Color.BLACK);
-			g.drawOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
-			g.setColor(newColor);
+			
+			oldRadialLevel = radialLevel;
+		}
 		}
 	}
 
@@ -183,17 +192,20 @@ public class Guard implements Drawable {
 		return false;
 		
 	}
+	private ArrayList<Line> lines = new ArrayList<>();
 	private int x;
 	private int y;
-
+	private double oldRadialLevel = -1; //optimizing code
 	private final int CIRCLE_SIZE = 10;
 	private final int DISPLACEMENT = CIRCLE_SIZE / 2; // used to center the line
 	// to the guard
 	private static int colorSelection = 0;
 	private static boolean compute;
 	private int  power = 0; // how many walls it can see through
-	private Color[] colors = {Color.blue,Color.green,Color.RED,Color.yellow,Color.CYAN,Color.PINK};
-	private Color newColor;
+	private final Color[] colors = {Color.blue,Color.green,Color.RED,Color.yellow,Color.CYAN,Color.PINK};
+	private final Color newColor;
+	
+	private static final DataModel dataModel = DataModel.getInstance();
 	
 
 }

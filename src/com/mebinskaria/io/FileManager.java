@@ -21,7 +21,13 @@ import com.mebinskaria.main.Drawable;
 
 public class FileManager {
 
-	public static void saveFile() {
+
+	public static FileManager getInstance()
+	{
+		return fileManager;
+	}
+
+	public void saveFile() {
 
 		Calendar now = Calendar.getInstance();
 		File desktop = new File(System.getProperty("user.home"), "Desktop\\ArtGalleryExports\\Saves");
@@ -38,7 +44,7 @@ public class FileManager {
 		try {
 			FileWriter fw = new FileWriter(saveReport);
 			BufferedWriter bw = new BufferedWriter(fw);
-			for(Drawable e: DataModel.getDrawables())
+			for(Drawable e: dataModel.getDrawables())
 			{
 				bw.write(e.toString());
 				bw.newLine();
@@ -49,14 +55,14 @@ public class FileManager {
 			 * Creates Save bin file to restore All Objects
 			 */
 			ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(saveDir));
-			os.writeObject(DataModel.getDrawables());
+			os.writeObject(dataModel.getDrawables());
 			os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	public static void chooseLoadFile(JFrame gallery) {
+	public void chooseLoadFile(JFrame gallery) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new java.io.File("."));
 		chooser.setCurrentDirectory(new java.io.File("."));
@@ -70,7 +76,7 @@ public class FileManager {
 		}
 	}
 	@SuppressWarnings("unchecked")
-	private static void loadFile(File file) {
+	private void loadFile(File file) {
 		ArrayList<Drawable> drawables = new ArrayList<>();
 		try {
 			ObjectInputStream os = new ObjectInputStream(new FileInputStream(file));
@@ -81,11 +87,11 @@ public class FileManager {
 			{
 				if(e instanceof Guard)
 				{	
-					DataModel.addGuard((Guard) e);
+					dataModel.addGuard((Guard) e);
 				}
 				if(e instanceof Wall)
 				{
-					DataModel.addWall((Wall) e);
+					dataModel.addWall((Wall) e);
 				}
 			}
 			
@@ -94,4 +100,6 @@ public class FileManager {
 			e.printStackTrace();
 		}
 	}
+	private static FileManager fileManager = new FileManager();
+	private final DataModel dataModel = DataModel.getInstance();
 }
