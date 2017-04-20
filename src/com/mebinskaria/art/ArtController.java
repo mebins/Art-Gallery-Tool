@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.mebinskaria.io.FileManager;
+import com.mebinskaria.io.MouseManager;
 import com.mebinskaria.io.Screenshot;
 import com.mebinskaria.main.DataModel;
 import com.mebinskaria.main.DataModel.Mode;
@@ -11,6 +12,12 @@ import com.mebinskaria.main.Gallery;
 
 public class ArtController {
 
+	public ArtController(JFrame frame, Gallery gallery)
+	{
+		mouseManager = new MouseManager(frame,gallery);
+		gallery.addMouseListener(mouseManager);
+		frame.addMouseListener(mouseManager);
+	}
 	public void readPower(JLabel power) {
 		try
 		{
@@ -25,6 +32,7 @@ public class ArtController {
 	}
 	public void restartCanvas() {
 		System.out.println("Erasing Canvas");
+		mouseManager.mouseReset();
 		dataModel.clearGuards();
 		dataModel.clearWalls();
 	}
@@ -72,5 +80,6 @@ public class ArtController {
 	
 	private final DataModel dataModel = DataModel.getInstance();
 	private final FileManager fileManager = FileManager.getInstance();
-	
+	private MouseManager mouseManager;
+
 }

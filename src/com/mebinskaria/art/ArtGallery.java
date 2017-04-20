@@ -16,7 +16,6 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import com.mebinskaria.io.MouseManager;
 import com.mebinskaria.main.DataModel;
 import com.mebinskaria.main.DataModel.Mode;
 import com.mebinskaria.main.Drawable;
@@ -64,14 +63,9 @@ public class ArtGallery extends Gallery {
 		buttons[6].addActionListener((ActionEvent event) -> controller.saveFile());
 		buttons[7].addActionListener((ActionEvent event) -> controller.loadChooseFile(gallery));
 		buttons[8].addActionListener((ActionEvent event) -> controller.setVisionPower(Integer.parseInt(power.getText())));
-		
-		mm = new MouseManager(gallery, this);
-
-		gallery.addMouseListener(mm);
 		canvas.add(this);
 		gallery.add(canvas,BorderLayout.CENTER);
 		this.setFocusable(false);
-		this.addMouseListener(mm);
 		this.createBufferStrategy(3);
 		bs = this.getBufferStrategy();
 		g = bs.getDrawGraphics();
@@ -200,10 +194,10 @@ public class ArtGallery extends Gallery {
 	private boolean polygonDrawn = false;
 	private boolean shouldRender = false;
 	private boolean computeButton = false;
-	private MouseManager mm;
+	
 	private Graphics g;
 	private BufferStrategy bs;
 	private Timer t;
-	private final ArtController controller = new ArtController();
+	private final ArtController controller = new ArtController(gallery,this);
 	private final DataModel dataModel = DataModel.getInstance();
 }

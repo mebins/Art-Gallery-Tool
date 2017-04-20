@@ -41,6 +41,16 @@ public class MouseManager implements MouseListener {
 
 	}
 
+	public void mouseReset()
+	{
+		if(gallery instanceof ArtGallery)
+		{
+			ArtGallery ag = (ArtGallery) gallery;
+			
+			ag.setX1(-1);
+			ag.setY1(-1);
+		}
+	}
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
