@@ -138,9 +138,21 @@ public class ArtGallery extends Gallery {
 			g.clearRect(0, 0, getWidth(), getHeight());
 			g.setColor(Color.BLACK);
 			
+			controller.render(g);
 			for(Drawable d : dataModel.getDrawables())
 			{
 				d.render(g);
+			}
+			for(Guard e : dataModel.getGuards())
+			{
+				g.setColor(Color.black);
+				int x = e.getX();
+				int y = e.getY();
+				g.drawOval(x, y, circleSize,circleSize);
+				g.setColor(e.getColor());
+				g.fillOval(x, y, circleSize, circleSize);
+				g.setColor(Color.BLACK);
+				g.drawString(e.getPower()+"", x-5, y);
 			}
 			g.dispose();
 			bs.show();
@@ -200,4 +212,5 @@ public class ArtGallery extends Gallery {
 	private Timer t;
 	private final ArtController controller = new ArtController(gallery,this);
 	private final DataModel dataModel = DataModel.getInstance();
+	private int circleSize = dataModel.getCircleSize();
 }

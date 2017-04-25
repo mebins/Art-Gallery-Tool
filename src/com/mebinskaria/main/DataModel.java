@@ -18,6 +18,8 @@ public class DataModel {
 	}
 	private ArrayList<Guard> guards = new ArrayList<>();
 	private ArrayList<Wall> walls = new ArrayList<>();
+	private final int CIRCLE_SIZE = 10;
+	private final int DISPLACEMENT = CIRCLE_SIZE / 2; // used to center the line
 	private double guardRadialSpace = 0;
 	private int guardPowerLevel = 0;
 	private boolean computing = false;
@@ -31,6 +33,15 @@ public class DataModel {
 	public void setMode(Mode mode)
 	{
 		this.mode = mode;
+	}
+	
+	public int getCircleSize()
+	{
+		return CIRCLE_SIZE;
+	}
+	public int getCircleDisplacement()
+	{
+		return DISPLACEMENT;
 	}
 	public void addWall(Wall w)
 	{

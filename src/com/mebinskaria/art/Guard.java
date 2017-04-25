@@ -26,10 +26,12 @@ public class Guard implements Drawable {
 		this.x = x;
 		this.y = y;
 		this.power = n;
-		newColor = colors[colorSelection];
-		if(++colorSelection >= colors.length) colorSelection = 0;
+		guardColor = colors[colorSelection];
+		if (++colorSelection >= colors.length)
+			colorSelection = 0;
 		compute = dataModel.isComputing();
 	}
+
 	/*
 	 * Draws the guard and if computed will draw the area the guard can see.
 	 * 
@@ -40,108 +42,107 @@ public class Guard implements Drawable {
 	 */
 	@Override
 	public void render(Graphics g) {
-		g.setColor(newColor);
-		g.fillOval(x, y, CIRCLE_SIZE, CIRCLE_SIZE);
+		g.setColor(guardColor);
 		if (compute) {
-				for(Line e : lines)
-				{
-					e.render(g);
-				}
+			for (Line e : lines) {
+				e.render(g);
 			}
-		g.setColor(newColor.brighter());
-		g.fillOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
-		g.setColor(Color.BLACK);
-		g.drawOval(this.x, this.y, CIRCLE_SIZE, CIRCLE_SIZE);
-		g.setColor(newColor);
 		}
+	}
 	
+	public Color getColor()
+	{
+		return guardColor;
+	}
 
-	
 	/*
 	 * Function used to update the Guard.
 	 */
 	public void update() {
-			compute = dataModel.isComputing();
-			computation(dataModel.getGuardRadialSpace());
-	}
-	
-	public void computation(double radialLevel) {
-		if(radialLevel != oldRadialLevel)
+		if(compute = dataModel.isComputing())
 		{
-		ArrayList<Wall> walls = dataModel.getWalls();
-		lines.clear();
-		// for every wall
-		int x = this.getX() + DISPLACEMENT;
-		int y = this.getY() + DISPLACEMENT;
-		int startX = x;
-		int startY = y;
-		int endX = 0;
-		int endY = 0;
-		double length = 4000;
+			computation(dataModel.getGuardRadialSpace());
+		}
 		
-		//360 degrees
-		for (double theta = 0; theta < 2*Math.PI; theta += radialLevel) {
-			ArrayList<Integer> optimizedList = new ArrayList<Integer>();
-			boolean possibleIntersection = false;
-			
-			/*
-			 * 1.Checks every line for a intersection
-			 * 2.If there is a intersection checks exactly how long the line has to be
-			 * 3.Draws the Line.
-			 */
-			for (int i = 0; i < walls.size(); i++) {
-				Wall line = walls.get(i);
-				endX = (int) (x + length * Math.sin(theta));
-				endY = (int) (y + length * Math.cos(theta));
-				if (Line2D.linesIntersect(startX, startY, endX, endY, line.getX(), line.getY(), line.getX2(),
-						line.getY2())) {
-					possibleIntersection = true;
-					// optimizing length
-					int optimizedLength = 1;
-					int optimizedEndX = (int) (x + optimizedLength * Math.sin(theta));
-					int optimizedEndY = (int) (y + optimizedLength * Math.cos(theta));
+	}
 
-					while (!Line2D.linesIntersect(startX, startY, optimizedEndX, optimizedEndY, line.getX(),
-							line.getY(), line.getX2(), line.getY2())) {
-						optimizedLength++;
-						optimizedEndX = (int) (x + optimizedLength * Math.sin(theta));
-						optimizedEndY = (int) (y + optimizedLength * Math.cos(theta));
-					}
-					optimizedList.add(optimizedLength);
-				}
-			}
-			//if there was a intersection, from 0 increment by 1 till collision.
-			if (possibleIntersection) {
-				for (int i = 0; i < power + 1; i++) {
-					if (optimizedList.size() > 0) {
-						int lowest = optimizedList.get(0);
-						int lowestIndex = 0;
-						for (int j = 1; j < optimizedList.size(); j++) {
-							if (lowest > optimizedList.get(j)) {
-								lowest = optimizedList.get(j);
-								lowestIndex = j;
-							}
+	public void computation(double radialLevel) {
+			
+	
+		if (radialLevel != oldRadialLevel) {
+			ArrayList<Wall> walls = dataModel.getWalls();
+			lines.clear();
+			// for every wall
+			int x = this.getX() + displacement;
+			int y = this.getY() + displacement;
+			int startX = x;
+			int startY = y;
+			int endX = 0;
+			int endY = 0;
+			double length = 4000;
+
+			// 360 degrees
+			for (double theta = 0; theta < 2 * Math.PI; theta += radialLevel) {
+				ArrayList<Integer> optimizedList = new ArrayList<Integer>();
+				boolean possibleIntersection = false;
+
+				/*
+				 * 1.Checks every line for a intersection 2.If there is a
+				 * intersection checks exactly how long the line has to be
+				 * 3.Draws the Line.
+				 */
+				for (int i = 0; i < walls.size(); i++) {
+					Wall line = walls.get(i);
+					endX = (int) (x + length * Math.sin(theta));
+					endY = (int) (y + length * Math.cos(theta));
+					if (Line2D.linesIntersect(startX, startY, endX, endY, line.getX(), line.getY(), line.getX2(),
+							line.getY2())) {
+						possibleIntersection = true;
+						// optimizing length
+						int optimizedLength = 1;
+						int optimizedEndX = (int) (x + optimizedLength * Math.sin(theta));
+						int optimizedEndY = (int) (y + optimizedLength * Math.cos(theta));
+
+						while (!Line2D.linesIntersect(startX, startY, optimizedEndX, optimizedEndY, line.getX(),
+								line.getY(), line.getX2(), line.getY2())) {
+							optimizedLength++;
+							optimizedEndX = (int) (x + optimizedLength * Math.sin(theta));
+							optimizedEndY = (int) (y + optimizedLength * Math.cos(theta));
 						}
-						optimizedList.remove(lowestIndex);
-
-						int finalX = (int) (x + lowest * Math.sin(theta));
-						int finalY = (int) (y + lowest * Math.cos(theta));
-						lines.add(new Line(startX,startY,finalX,finalY));
+						optimizedList.add(optimizedLength);
 					}
 				}
+				// if there was a intersection, from 0 increment by 1 till
+				// collision.
+				if (possibleIntersection) {
+					for (int i = 0; i < power + 1; i++) {
+						if (optimizedList.size() > 0) {
+							int lowest = optimizedList.get(0);
+							int lowestIndex = 0;
+							for (int j = 1; j < optimizedList.size(); j++) {
+								if (lowest > optimizedList.get(j)) {
+									lowest = optimizedList.get(j);
+									lowestIndex = j;
+								}
+							}
+							optimizedList.remove(lowestIndex);
+
+							int finalX = (int) (x + lowest * Math.sin(theta));
+							int finalY = (int) (y + lowest * Math.cos(theta));
+							lines.add(new Line(startX, startY, finalX, finalY));
+						}
+					}
+				}
+
+				oldRadialLevel = radialLevel;
 			}
-			
-			oldRadialLevel = radialLevel;
-		}
 		}
 	}
 
-	
-	public String toString()
-	{
-		return "G:"+this.x + ":"+this.y+":"+this.power;
+	public String toString() {
+		return "G:" + this.x + ":" + this.y + ":" + this.power;
 	}
-	
+
 	/*
 	 * returns X of the guard.
 	 */
@@ -156,10 +157,10 @@ public class Guard implements Drawable {
 		this.x = x;
 	}
 
-	public int getPower()
-	{
+	public int getPower() {
 		return power;
 	}
+
 	/*
 	 * @returns Y of the guard.
 	 */
@@ -173,39 +174,35 @@ public class Guard implements Drawable {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public boolean equals(Object target)
-	{
-		if(target instanceof Guard)
-		{
-			Guard other = (Guard)target;
-			if(other.x == x)
-			{
-				if(other.y == y)
-				{
-					if(other.power == power)
-					{
-						if(other.newColor.equals(newColor)) return true;
+
+	public boolean equals(Object target) {
+		if (target instanceof Guard) {
+			Guard other = (Guard) target;
+			if (other.x == x) {
+				if (other.y == y) {
+					if (other.power == power) {
+						if (other.guardColor.equals(guardColor))
+							return true;
 					}
 				}
 			}
 		}
 		return false;
-		
+
 	}
+
 	private ArrayList<Line> lines = new ArrayList<>();
 	private int x;
 	private int y;
-	private double oldRadialLevel = -1; //optimizing code
-	private final int CIRCLE_SIZE = 10;
-	private final int DISPLACEMENT = CIRCLE_SIZE / 2; // used to center the line
+	private double oldRadialLevel = -1; // optimizing code
+	
 	// to the guard
 	private static int colorSelection = 0;
 	private static boolean compute;
-	private int  power = 0; // how many walls it can see through
-	private final Color[] colors = {Color.blue,Color.green,Color.RED,Color.yellow,Color.CYAN,Color.PINK};
-	private final Color newColor;
-	
+	private int power = 0; // how many walls it can see through
+	private final Color[] colors = { Color.blue, Color.green, Color.RED, Color.yellow, Color.CYAN, Color.PINK };
+	private final Color guardColor;
+	private int displacement = dataModel.getCircleDisplacement();
 	private static final DataModel dataModel = DataModel.getInstance();
-	
 
 }

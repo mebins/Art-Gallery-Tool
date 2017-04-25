@@ -1,5 +1,7 @@
 package com.mebinskaria.art;
 
+import java.awt.Graphics;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -61,6 +63,11 @@ public class ArtController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void render(Graphics g)
+	{
+		mouseManager.mouseRender(g);
 	}
 	
 	public void setGuardRadialSpace(double value)
