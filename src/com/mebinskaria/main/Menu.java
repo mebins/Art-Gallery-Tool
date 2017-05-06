@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import com.mebinskaria.art.ArtGallery;
+import com.mebinskaria.light.LightGallery;
 
 public class Menu extends Canvas {
 	
@@ -18,7 +19,7 @@ public class Menu extends Canvas {
 	Gallery gallery;
 	private int width;
 	private int height;
-	private JButton buttons[] = {new JButton("Art Gallery")};
+	private JButton buttons[] = {new JButton("Art Gallery"), new JButton("Light Gallery")};
 	public Menu(String name, int width, int height)
 	{
 		this.width = width;
@@ -41,6 +42,7 @@ public class Menu extends Canvas {
 			menuFrame.add(b);
 		}
 		buttons[0].addActionListener((ActionEvent event) -> createArtGallery());
+		buttons[1].addActionListener((ActionEvent event) -> createLightGallery());
 	}
 	private void createArtGallery()
 	{
@@ -48,8 +50,17 @@ public class Menu extends Canvas {
 		{
 			menuFrame.remove(e);
 		}
+		
 		gallery = new ArtGallery(width,height,menuFrame);
 		
+	}
+	private void createLightGallery()
+	{
+		for(JButton e: buttons)
+		{
+			menuFrame.remove(e);
+		}
+		gallery = new LightGallery(width,height,menuFrame);
 	}
 
 }

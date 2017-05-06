@@ -39,7 +39,6 @@ public abstract class Gallery extends Canvas {
 		gallery.pack();
 	}
 	
-	public abstract void initialize();
 	public abstract void update();
 	public abstract void render(Graphics g);
 

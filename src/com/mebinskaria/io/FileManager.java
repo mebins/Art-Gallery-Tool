@@ -14,6 +14,7 @@ import java.util.Calendar;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+import com.mebinskaria.art.ArtController;
 import com.mebinskaria.art.Guard;
 import com.mebinskaria.art.Wall;
 import com.mebinskaria.main.DataModel;
@@ -22,9 +23,13 @@ import com.mebinskaria.main.Drawable;
 public class FileManager {
 
 
+	private FileManager()
+	{
+		
+	}
 	public static FileManager getInstance()
 	{
-		return fileManager;
+		return instance;
 	}
 
 	public void saveFile() {
@@ -94,12 +99,15 @@ public class FileManager {
 					dataModel.addWall((Wall) e);
 				}
 			}
+//			controller.notifyObservers();
 			
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 	}
-	private static FileManager fileManager = new FileManager();
+	private static FileManager instance = new FileManager();
 	private final DataModel dataModel = DataModel.getInstance();
 }

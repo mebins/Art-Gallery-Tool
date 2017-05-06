@@ -59,6 +59,29 @@ public class Wall implements Drawable{
 	public void setY2(int y2) {
 		this.y2 = y2;
 	}
+	
+	public boolean equals(Object x)
+	{
+		if(x instanceof Wall)
+		{
+			Wall other = (Wall) x;
+			if(other.x == this.x)
+			{
+				if(other.y == this.y)
+				{
+					if(other.x2 == this.x2)
+					{
+						if(other.y2 == this.y2)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	/*
 	 * Draws the Walls

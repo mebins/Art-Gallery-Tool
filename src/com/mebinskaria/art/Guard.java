@@ -9,16 +9,27 @@ import com.mebinskaria.main.DataModel;
 import com.mebinskaria.main.Drawable;
 
 @SuppressWarnings("serial")
+/**
+ * 
+ * 
+ * COVERS SECTION 7 (Full Encapsulation, Loose Coupling, Exhibits Polymorphism)
+ * COVERS SECTION 9 (Equal Method, Serialization)
+ * When computation is on (Calculates 360 Degrees of Lines (how many depends on
+ * the radial space level) that collide with walls (depending on what level of
+ * power the guard is at it will go through that many walls, default 0 power
+ * level)).
+ * 
+ * @author Mebin Skaria
+ *
+ */
 public class Guard implements Drawable {
 
-	/*
+	/**
 	 * Constructs the Guard Class
 	 * 
 	 * @param x Stores the X of the Guard.
 	 * 
 	 * @param y Stores the Y of the Guard.
-	 * 
-	 * @param color The number of the Color Picked from colorSelection.
 	 * 
 	 * @param n How many Walls the Guard can see through.
 	 */
@@ -32,13 +43,11 @@ public class Guard implements Drawable {
 		compute = dataModel.isComputing();
 	}
 
-	/*
+	/**
 	 * Draws the guard and if computed will draw the area the guard can see.
 	 * 
 	 * @param g The Paint brush that draws the graphics
 	 * 
-	 * @param list The array of Walls that is used to see what the Guard can
-	 * see.
 	 */
 	@Override
 	public void render(Graphics g) {
@@ -49,26 +58,31 @@ public class Guard implements Drawable {
 			}
 		}
 	}
-	
-	public Color getColor()
-	{
+
+	/**
+	 * 
+	 * @return the color of the guard.
+	 */
+	public Color getColor() {
 		return guardColor;
 	}
 
-	/*
+	/**
 	 * Function used to update the Guard.
 	 */
 	public void update() {
-		if(compute = dataModel.isComputing())
-		{
+		if (compute = dataModel.isComputing()) {
 			computation(dataModel.getGuardRadialSpace());
 		}
-		
+
 	}
 
+	/**
+	 * 
+	 * @param radialLevel the radial space between each line in radian
+	 */
 	public void computation(double radialLevel) {
-			
-	
+
 		if (radialLevel != oldRadialLevel) {
 			ArrayList<Wall> walls = dataModel.getWalls();
 			lines.clear();
@@ -80,7 +94,6 @@ public class Guard implements Drawable {
 			int endX = 0;
 			int endY = 0;
 			double length = 4000;
-
 			// 360 degrees
 			for (double theta = 0; theta < 2 * Math.PI; theta += radialLevel) {
 				ArrayList<Integer> optimizedList = new ArrayList<Integer>();
@@ -131,6 +144,7 @@ public class Guard implements Drawable {
 							int finalY = (int) (y + lowest * Math.cos(theta));
 							lines.add(new Line(startX, startY, finalX, finalY));
 						}
+						
 					}
 				}
 
@@ -139,49 +153,58 @@ public class Guard implements Drawable {
 		}
 	}
 
+	/**
+	 * @return a String in the appropriate format for the Guard
+	 */
 	public String toString() {
 		return "G:" + this.x + ":" + this.y + ":" + this.power;
 	}
 
-	/*
-	 * returns X of the guard.
+	/**
+	 * @return X of the guard.
 	 */
 	public int getX() {
 		return x;
 	}
 
-	/*
+	/**
 	 * @param x sets Guards x.
 	 */
 	public void setX(int x) {
 		this.x = x;
 	}
 
+	/**
+	 * 
+	 * @return the guards vision to see through Walls.
+	 */
 	public int getPower() {
 		return power;
 	}
 
-	/*
-	 * @returns Y of the guard.
+	/**
+	 * @return Y of the guard.
 	 */
 	public int getY() {
 		return y;
 	}
 
-	/*
+	/**
 	 * @param y sets Guards y.
 	 */
 	public void setY(int y) {
 		this.y = y;
 	}
 
+	/**
+	 * reflexive, symmetric, transitive, and properly handling of null.
+	 */
 	public boolean equals(Object target) {
 		if (target instanceof Guard) {
 			Guard other = (Guard) target;
 			if (other.x == x) {
 				if (other.y == y) {
 					if (other.power == power) {
-						if (other.guardColor.equals(guardColor))
 							return true;
 					}
 				}
@@ -190,15 +213,19 @@ public class Guard implements Drawable {
 		return false;
 
 	}
+	public ArrayList<Line> getCache()
+	{
+		return lines;
+	}
 
 	private ArrayList<Line> lines = new ArrayList<>();
 	private int x;
 	private int y;
 	private double oldRadialLevel = -1; // optimizing code
-	
+
 	// to the guard
 	private static int colorSelection = 0;
-	private static boolean compute;
+	private boolean compute;
 	private int power = 0; // how many walls it can see through
 	private final Color[] colors = { Color.blue, Color.green, Color.RED, Color.yellow, Color.CYAN, Color.PINK };
 	private final Color guardColor;

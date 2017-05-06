@@ -1,7 +1,5 @@
 package com.mebinskaria.io;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import com.mebinskaria.art.ArtController;
 import com.mebinskaria.art.ArtGallery;
 import com.mebinskaria.art.Guard;
 import com.mebinskaria.art.Wall;
@@ -16,6 +15,13 @@ import com.mebinskaria.main.DataModel;
 import com.mebinskaria.main.DataModel.Mode;
 import com.mebinskaria.main.Gallery;
 
+
+/**
+ * 
+ * @author Mebin Skaria
+ * Manages the Mouse Points and events.
+ *
+ */
 public class MouseManager implements MouseListener {
 	private JFrame frame;
 	private Gallery gallery;
@@ -23,6 +29,8 @@ public class MouseManager implements MouseListener {
 	public MouseManager(JFrame frame, Gallery gallery) {
 		this.frame = frame;
 		this.gallery = gallery;
+		frame.addMouseListener(this);
+		gallery.addMouseListener(this);
 	}
 
 	@Override
@@ -44,35 +52,16 @@ public class MouseManager implements MouseListener {
 	}
 
 	public void mouseReset() {
-		if (gallery instanceof ArtGallery) {
-			ArtGallery ag = (ArtGallery) gallery;
-
-			ag.setX1(-1);
-			ag.setY1(-1);
-		}
+			dataModel.setX(-1);
+			dataModel.setY(-1);
 	}
 
-	public void mouseRender(Graphics g) {
-		if(shouldRender)
-		{
-			if (gallery instanceof ArtGallery) {
-				ArtGallery ag = (ArtGallery) gallery;
-				{
-					if(ag.getX1() != 1 && ag.getY1() != -1)
-					{
-						g.setColor(Color.black);
-						g.fillOval(ag.getX1()-DISPLACEMENT,ag.getY1()-DISPLACEMENT,CIRCLE_SIZE,CIRCLE_SIZE);
-					}
-				}
-			}
-		}
-		
-	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 
 		if (gallery instanceof ArtGallery) {
+			
 			ArtGallery ag = (ArtGallery) gallery;
 			Point position = frame.getMousePosition();
 			position.x -= WINDOWSLINECALIBRATIONX;
@@ -91,17 +80,17 @@ public class MouseManager implements MouseListener {
 						walls.add(new Wall((int) lastWall.getX2(), (int) lastWall.getY2(), (int) firstWall.getX(),
 								(int) firstWall.getY()));
 						ag.setPolygonDrawn(true);
-						ag.setX1(-1);
-						ag.setY1(-1);
+						dataModel.setX(-1);
+						dataModel.setY(-1);
 					} else {
 						walls.add(new Wall((int) lastWall.getX2(), (int) lastWall.getY2(), (int) position.getX(),
 								(int) position.getY()));
 					}
-					dataModel.setWalls(walls);
+					controller.setWalls(walls);
 				} else {
 
-					int x1 = ag.getX1();
-					int y1 = ag.getY1();
+					int x1 = dataModel.getX();
+					int y1 = dataModel.getY();
 
 					if (x1 != -1 && y1 != -1) {
 						walls.add(new Wall(x1, y1, (int) position.getX(), (int) position.getY()));
@@ -109,13 +98,11 @@ public class MouseManager implements MouseListener {
 						y1 = -1;
 						ag.setPolygonIndex(walls.size() - 1);
 						ag.setPolygonDrawn(false);
-						shouldRender = false;
 					} else {
-						ag.setX1((int) position.getX());
-						ag.setY1((int) position.getY());
-						shouldRender = true;
+						dataModel.setX((int) position.getX());
+						dataModel.setY((int) position.getY());
 					}
-					dataModel.setWalls(walls);
+					controller.setWalls(walls);
 				}
 
 			}
@@ -125,7 +112,7 @@ public class MouseManager implements MouseListener {
 			position.y -= WINDOWSGUARDCALIBRATIONY;
 			position.x -= WINDOWSGUARDCALIBRATIONX;
 			if (dataModel.getMode() == Mode.GUARD) {
-				dataModel.addGuard(
+				controller.addGuard(
 						new Guard((int) position.getX(), (int) position.getY(), dataModel.getGuardPowerLevel()));
 			}
 		}
@@ -138,12 +125,10 @@ public class MouseManager implements MouseListener {
 		// TODO Auto-generated method stub
 
 	}
-	private boolean shouldRender = false;
 	private final int WINDOWSLINECALIBRATIONY = 35;
 	private final int WINDOWSLINECALIBRATIONX = 11;
 	private final int WINDOWSGUARDCALIBRATIONY = 10;
 	private final int WINDOWSGUARDCALIBRATIONX = 7;
-	private final int CIRCLE_SIZE = 10;
-	private final int DISPLACEMENT = CIRCLE_SIZE / 2;
+	private final ArtController controller = ArtController.getInstance();
 	private final DataModel dataModel = DataModel.getInstance();
 }
